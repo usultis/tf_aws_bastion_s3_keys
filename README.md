@@ -14,9 +14,10 @@ Only SSH access is allowed to the bastion host.
 
   * `name` - Name (default, `bastion`)
   * `instance_type` - Instance type (default, `t2.micro`)
-  * `ami_id` - AMI ID of Ubuntu (see `samples/ami.tf`)
+  * `ami` - AMI ID of Ubuntu (see `samples/ami.tf`)
   * `region` - Region (default, `eu-west-1`)
   * `iam_instance_profile` - IAM instance profile which is allowed to access S3 bucket (see `samples/iam_s3_readonly.tf`)
+  * `enable_monitoring` - Whether to enable detailed monitoring (default, `true`)
   * `s3_bucket_name` - S3 bucket name which contains public keys (see `samples/s3_ssh_public_keys.tf`)
   * `s3_bucket_uri `– S3 URI which contains the public keys. If specified, `s3_bucket_name` will be ignored
   * `vpc_id` - VPC where bastion host should be created
@@ -26,7 +27,8 @@ Only SSH access is allowed to the bastion host.
   * `associate_public_ip_address` - Whether to auto-assign public IP to the instance (by default - `false`)
   * `eip` - EIP to put into EC2 tag (can be used with scripts like https://github.com/skymill/aws-ec2-assign-elastic-ip, default - empty value)
   * `key_name` - Launch configuration key name to be applied to created instance(s).
-  * `allowed_cidr` - A list of CIDR Networks to allow ssh access to. Defaults to 0.0.0.0/0
+  * `allowed_cidr` - A list of CIDR Networks to allow ssh access to. Defaults to "0.0.0.0/0"
+  * `allowed_ipv6_cidr` - A list of IPv6 CIDR Networks to allow ssh access to. Defaults to "::/0"
   * `allowed_security_groups` - A list of Security Group ID's to allow access to the bastion host (useful if bastion is deployed internally) Defaults to empty list
 
 ## Outputs:
@@ -79,10 +81,6 @@ point to existing bastion instance.  You will also need to add allow_associatead
     }
 
 After you run `terraform apply` you should be able to login to your bastion host like:
-
-    $ ssh ${module.bastion.ssh_user}@${module.bastion.instance_ip}
-
-or:
 
     $ ssh ${module.bastion.ssh_user}@${aws_eip.bastion.public_ip}
 
